@@ -1,10 +1,10 @@
 {
   "pages": [
     {
-      "path": "pages/add/add"
+      "path": "pages/index/index"
     },
     {
-      "path": "pages/index/index"
+      "path": "pages/add/add"
     }
   ],
   "globalStyle": {

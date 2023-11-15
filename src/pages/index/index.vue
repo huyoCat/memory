@@ -1,6 +1,6 @@
 <template>
   <view class="h-100vh overflow-hidden bg-#F5F7F8">
-    <view class="flex justify-end mt-30rpx p-30rpx items-center">
+    <view class="flex justify-end mt-30rpx p-60rpx items-center">
       <view>
         <span class="iconfont icon-shijian text-50rpx c-#c4da93"></span>
       </view>
@@ -19,7 +19,7 @@
         </view>
         <view
           class="text-130rpx font-bold flex justify-center items-center box-border">
-          300
+          {{ memoryList[0].days }}
         </view>
         <view
           class="h-70rpx line-height-70rpx text-center c-#c4da93 box-border text-20rpx">
@@ -45,7 +45,7 @@
         <view
           v-for="(item, index) in memoryList"
           :key="item.id"
-          v-show="index !== 1"
+          v-show="index !== 0"
           class="flex justify-between my-20rpx box-border b-rd-14rpx overflow-hidden c-#121212 shadow bg-#fff">
           <view
             v-if="item.opt === 'pass'"
@@ -73,74 +73,48 @@
 </template>
 
 <script setup>
+import { onShow } from "@dcloudio/uni-app"
 import { ref } from "vue"
 
 function addMemory(params) {
-  uni.navigateTo({
+  uni.redirectTo({
     url: "../add/add",
   })
 }
 let now = ref(new Date())
-let memoryList = ref([
-  {
-    id: 1,
-    title:
-      "eqwewqdsadwww呜呜呜呜呜呜呜呜呜呜呜问问呜呜呜呜无无无无无无无无无无无无无无无",
-    date: "2023-11-06",
-    days: "100",
-    opt: "pass",
-  },
-  {
-    id: 2,
-    title: "eqwewqdsad",
-    date: "2024-11-06",
-    days: "100",
-    opt: "future",
-  },
-  {
-    id: 3,
-    title: "eqwewqdsad",
-    date: "2023-07-06",
-    days: "100",
-    opt: "pass",
-  },
-  {
-    id: 4,
-    title: "eqwewqdsad",
-    date: "2023-12-06",
-    days: "100",
-    opt: "future",
-  },
-])
+let memoryList = ref([])
 
-try {
-  const value = uni.getStorageSync("memoryList") || []
-  if (value) {
-    console.log(value)
-    memoryList = [].concat(value)
-    // memoryList = [...value]
-    // TODO:计算日期
-    for (let item of memoryList) {
-      const dateNow = new Date()
-      const date = new Date(memory.date)
+onShow(() => {
+  console.log("执行onShow", uni.getStorageSync("memoryList"))
+  try {
+    const value = uni.getStorageSync("memoryList") || []
+    if (value) {
+      console.log(value)
+      memoryList = [].concat(value)
+      // memoryList = [...value]
+      // TODO:计算日期
+      for (let item of memoryList) {
+        const dateNow = new Date()
+        const date = new Date(item.date)
 
-      item.opt = date > dateNow ? "future" : "pass"
+        item.opt = date > dateNow ? "future" : "pass"
 
-      // 计算两个日期的毫秒差距
-      const timeDifference = Math.abs(dateNow - date)
+        // 计算两个日期的毫秒差距
+        const timeDifference = Math.abs(dateNow - date)
 
-      // 将毫秒差距转换为天数
-      item.days = Math.ceil(timeDifference / (1000 * 60 * 60 * 24))
+        // 将毫秒差距转换为天数
+        item.days = Math.ceil(timeDifference / (1000 * 60 * 60 * 24))
+      }
     }
+  } catch (e) {
+    // error
+    console.log(e)
+    uni.showToast({
+      icon: "none",
+      title: "出错了",
+    })
   }
-} catch (e) {
-  // error
-  console.log(e)
-  uni.showToast({
-    icon: "none",
-    title: "出错了",
-  })
-}
+})
 </script>
 
 <style lang="less" scoped>

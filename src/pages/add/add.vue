@@ -1,7 +1,7 @@
 <template>
   <view class="h-100vh overflow-hidden bg-#F5F7F8 c-#1E1F20">
     <view class="">
-      <view class="p-30rpx pt-60rpx bg-#e1ecc8" @click="uni.navigateBack()">
+      <view class="p-30rpx pt-90rpx bg-#e1ecc8" @click="handleBack">
         <span class="iconfont icon-xitongfanhui text-30rpx"></span>
         <text class="ml-20rpx c-#1E1F20 text-28rpx">添加新日子</text>
       </view>
@@ -54,7 +54,7 @@
   </view>
 </template>
 <script setup>
-import { uni } from "@dcloudio/uni-h5"
+// import { uni } from "@dcloudio/uni-h5"
 // import { nanoid } from "nanoid"
 import { reactive } from "vue"
 let userInput = reactive({
@@ -73,6 +73,12 @@ function handleTitle(e) {
 }
 function handleSetTop(e) {
   userInput.setTop = e.detail.value
+}
+
+function handleBack() {
+  uni.redirectTo({
+    url: "../index/index",
+  })
 }
 
 function saveMemory() {
@@ -107,12 +113,13 @@ function saveMemory() {
           for (let item of memoryList) {
             item.setTop = false
           }
-          memoryList.shift(memory)
+          memoryList.unshift(memory)
         } else {
           memoryList.push(memory)
         }
 
         try {
+          console.log(memoryList, "保存")
           uni.setStorageSync("memoryList", memoryList)
         } catch (e) {
           // error
@@ -122,7 +129,9 @@ function saveMemory() {
             title: "出错了",
           })
         }
-        uni.navigateBack()
+        uni.redirectTo({
+          url: "../index/index",
+        })
       }
     } catch (e) {
       // error
